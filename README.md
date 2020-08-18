@@ -113,7 +113,7 @@ The main features of the syntax are:
   like `["$arc","pete","father","john"]` and an
   `"$narc"` predicate for named triplets aka quads like `["$narc","pete","father","john","eveknows"]`.
 * JSON objects aka maps like  
-  `{"son":"pete", "@logic": [{"@id":"?:X","son":"?:Y"},"=>",{"@id":"?:Y","parent":"?:X"}}` 
+  `{"son":"pete", "age":30, "@logic": [{"@id":"?:X","son":"?:Y"},"=>",{"@id":"?:Y","parent":"?:X"}}` 
   are interpreted as logic and allow additionally inserting full *FOL* into objects.
 * JSON strings can represent ordinary constant/function/predicate symbols like `"foo"`,
   bound variables likes `"X"`, free variables like `"?:X"`, blank nodes like `"_:b0"` 
