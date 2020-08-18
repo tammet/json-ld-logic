@@ -65,11 +65,11 @@ running gkc in the browser using WASM.
 A simple unsatisfiable example using core JSON-LD-LOGIC stating some facts, rules and finally a question in the negated form:
 
     [
-      ["brother","john","mike"],
-      ["brother","john","pete"],
-      [["brother","?:X","?:Y"], "=>", ["brother","?:Y","?:X"]],
-      [[["brother","?:X","?:Y"], "&",  ["brother","?:Y","?:Z"]], "=>", ["brother","?:X","?:Z"]],
-      ["~brother","mike","pete"]
+      ["sibling","john","mike"],
+      ["sibling","john","pete"],
+      [["sibling","?:X","?:Y"], "=>", ["sibling","?:Y","?:X"]],
+      [[["sibling","?:X","?:Y"], "&",  ["sibling","?:Y","?:Z"]], "=>", ["sibling","?:X","?:Z"]],
+      ["~sibling","mike","pete"]
     ]
 
 Another example using full JSON-LD-LOGIC demonstrating the combination of a more conventional logic syntax
@@ -108,19 +108,19 @@ convenience operators and indicating a question to be answered:
 The main features of the syntax are:
 
 * Terms, atoms and logical formulas are represented as JSON lists with predicate/function symbols 
-  in the first position (prefix form) like `["brother","john","pete"]`,
+  in the first position (prefix form) like `["father","john","pete"]`,
 * JSON-LD semantics in RDF is represented by the`"$arc"` predicate for triplets
   like `["$arc","pete","father","john"]` and an
   `"$narc"` predicate for named triplets aka quads like `["$narc","pete","father","john","eveknows"]`.
-* JSON objects aka maps like  `{"father:"john", "@logic": ["p","?:X",1]}` are also used for 
-  inserting logic into JSON-LD expressions and adding metainformation to logic formulas.  
+* JSON objects aka maps like  
+  `{"son":"pete", "@logic": [{"@id":"?:X","son":"?:Y"},"=>",{"@id":"?:Y","parent":"?:X"}}` 
+  are interpreted as logic and allow additionally inserting full *FOL* into objects.
 * JSON strings can represent ordinary constant/function/predicate symbols like `"foo"`,
   bound variables likes `"X"`, free variables like `"?:X"`, blank nodes like `"_:b0"` 
   and distinct symbols like `"#:bar"`, the latter three using special JSON-LD-style *prefixes*. 
 * Arithmetic, a list type, string operations on distinct symbols and the semantics for null are defined.  
 * JSON lists in JSON-LD like `{"@list":["a",4]}` are translated to nested typed terms
   using the `"$list"` and `"$nil"` functions: `["$list","a",["$list",4,"$nil"]]`.
-
 
 The semantics of most JSFOL constructions stems directly from the semantics of the 
 corresponding TPTP constructions. The semantics of lists, null, 
@@ -156,11 +156,11 @@ examples together with their translation to the TPTP language and a proof found.
 
 The first example above can be converted to TPTP as:
 
-    fof(frm_1,axiom,brother(john,mike)).
-    fof(frm_2,axiom,brother(john,pete)).
-    fof(frm_3,axiom,(! [X,Y] : (brother(X,Y) => brother(Y,X)))).
-    fof(frm_4,axiom,(! [X,Y,Z] : ((brother(X,Y) & brother(Y,Z)) => brother(X,Z)))).
-    fof(frm_5,axiom,~brother(mike,pete)).
+    fof(frm_1,axiom,sibling(john,mike)).
+    fof(frm_2,axiom,sibling(john,pete)).
+    fof(frm_3,axiom,(! [X,Y] : (sibling(X,Y) => sibling(Y,X)))).
+    fof(frm_4,axiom,(! [X,Y,Z] : ((sibling(X,Y) & sibling(Y,Z)) => sibling(X,Z)))).
+    fof(frm_5,axiom,~sibling(mike,pete)).
 
 The TPTP syntax wraps formulas into the `fof(name,role,formula).`
 construction terminated by the period. 
@@ -180,15 +180,15 @@ We obtain the following refutation proof in json:
     {
     "proof":
     [
-    [1, ["in", "frm_4"], [["-brother","?:X","?:Y"], ["-brother","?:Z","?:X"], 
-                          ["brother","?:Z","?:Y"]]],
-    [2, ["in", "frm_1"], [["brother","john","mike"]]],
-    [3, ["mp", 1, 2], [["-brother","?:X","john"], ["brother","?:X","mike"]]],
-    [4, ["in", "frm_3"], [["-brother","?:X","?:Y"], ["brother","?:Y","?:X"]]],
-    [5, ["in", "frm_2"], [["brother","john","pete"]]],
-    [6, ["mp", 4, 5], [["brother","pete","john"]]],
-    [7, ["mp", 3, 6], [["brother","pete","mike"]]],
-    [8, ["in", "frm_5"], [["-brother","mike","pete"]]],
+    [1, ["in", "frm_4"], [["-sibling","?:X","?:Y"], ["-sibling","?:Z","?:X"], 
+                          ["sibling","?:Z","?:Y"]]],
+    [2, ["in", "frm_1"], [["sibling","john","mike"]]],
+    [3, ["mp", 1, 2], [["-sibling","?:X","john"], ["sibling","?:X","mike"]]],
+    [4, ["in", "frm_3"], [["-sibling","?:X","?:Y"], ["sibling","?:Y","?:X"]]],
+    [5, ["in", "frm_2"], [["sibling","john","pete"]]],
+    [6, ["mp", 4, 5], [["sibling","pete","john"]]],
+    [7, ["mp", 3, 6], [["sibling","pete","mike"]]],
+    [8, ["in", "frm_5"], [["-sibling","mike","pete"]]],
     [9, ["mp", 7, 4, 8], false]
     ]}
     ]}
@@ -206,7 +206,7 @@ The proofs in this document are json objects with two keys:
 
 The formulas in the proof are always just lists of atoms (called *clauses*) treated
 as a disjunction (or). Negation is prefixed as a minus sign `-` to the predicate:
-`["-brother","mike","pete"]` means the same as `["not" ["brother","mike","pete"]]`.
+`["-sibling","mike","pete"]` means the same as `["not" ["sibling","mike","pete"]]`.
 Strings prefixed by `?:` like `?:X` are *free variables* implicitly assumed to be quantified by *forall*.
 `["in","frm_N" ]` means that the clause stems from the *N*th fact/rule given as input.
 Observe that one input rule may generate a number of different clauses and
@@ -544,9 +544,9 @@ The JSON-LD-LOGIC core fragment document must be a list of formulas like
 the following example:
  
     [      
-      ["brother","john","mike"],
-      ["brother","john","pete"],
-      [["brother","?:X","?:Y"], "=>", ["brother","?:Y","?:X"]],
+      ["sibling","john","mike"],
+      ["sibling","john","pete"],
+      [["sibling","?:X","?:Y"], "=>", ["sibling","?:Y","?:X"]],
       [["is_father","?:X"], "<=>", ["exists",["Y"],["father,"?:X","Y"]]]      
     ]
 
@@ -560,9 +560,9 @@ the formulas with the *conjecture* role (to be described later).
 The previous example is thus equivalent to:
 
     [
-      ["brother","john","mike"], "&", 
-      ["brother","john","pete"], "&",
-      ["forall",["X","Y"], [["brother","X","Y"], "=>", ["brother","Y","X"]]], "&",
+      ["sibling","john","mike"], "&", 
+      ["sibling","john","pete"], "&",
+      ["forall",["X","Y"], [["sibling","X","Y"], "=>", ["sibling","Y","X"]]], "&",
       ["forall",["X"], [["is_father","X"], "<=>", ["exists",["Y"],["father,"X","Y"]]]]      
     ]
  
