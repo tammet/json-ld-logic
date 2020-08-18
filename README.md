@@ -142,7 +142,7 @@ axioms in addition to the ones explicitly present in the examples.
 
 The current version of the document does not cover all the advanced features of the
 W3C JSON-LD recommendation like @container, @direction, @index, @prefix, @propagate,
-@protected, @container, @language, @reverse. The document does cover core features like  
+@protected, @container, @language, @reverse. The document does cover core features like
 @id, @context, @base, @graph, @list, @type (the latter only outside @context).
 
 
