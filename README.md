@@ -115,7 +115,7 @@ The main features of the syntax are:
   `"$narc"` predicate for named triplets aka quads like `["$narc","pete","father","john","eveknows"]`.
 * JSON objects aka maps like  
   `{"son":"pete", "age":30, "@logic": [{"@id":"?:X","son":"?:Y"},"=>",{"@id":"?:Y","parent":"?:X"}}` 
-  are interpreted as logic and allow additionally inserting full *FOL* into objects.
+  are interpreted as logical statements and use the special `"@logic"` key for inserting full *FOL*.
 * JSON strings can represent ordinary constant/function/predicate symbols like `"foo"`,
   bound variables likes `"X"`, free variables like `"?:X"`, blank nodes like `"_:b0"` 
   and distinct symbols like `"#:bar"`, the latter three using special JSON-LD-style *prefixes*. 
@@ -128,7 +128,7 @@ corresponding TPTP constructions. The semantics of *lists*, *null*,
 *if ... then ...* etc not present in TPTP are presented explicitly in the current document
 via translations to the TPTP constructions.
 
-Despite following the RDF semantics of JSON-LD, JSON-LD-LOGIC does not include
+Despite following the RDF semantics of JSON-LD, JSON-LD-LOGIC does not include 
 RDF or RDFS axioms like the transitivity of `subClassOf`. Such axioms can
 be written in the JSON-LD-LOGIC or TPTP language and explicitly added to the formula to be proved.
 The [TPTP axiom collection](http://www.tptp.org/cgi-bin/SeeTPTP?Category=Axioms)
@@ -142,8 +142,9 @@ axioms in addition to the ones explicitly present in the examples.
 
 The current version of the document does not cover all the advanced features of the
 W3C JSON-LD recommendation like @container, @direction, @index, @prefix, @propagate,
-@protected, @container, @language, @reverse. The document does cover core features like
-@id, @context, @base, @graph, @list, @type (the latter only outside @context).
+@protected, @language, @reverse. The document does cover core features like
+@id, @context, @base, @graph, @list, @type (the latter only outside @context: see the
+discussion in the *Datatypes and typed symbols* chapter).
 
 
 
