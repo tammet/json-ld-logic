@@ -203,12 +203,13 @@ The proofs in this document are json objects with two keys:
   Here we did not ask to find a concrete person, so we have only 
   a single answer containing just a `proof` key indicating a list with the
   numbered steps of the proof found:
-  each step has a form `[clause id, [derivation rule, source 1, ..., source N], clause]` where the clause
-  either stems from an input fact / rule or is derived from the indicated sources. A source may be represented
-  as a step number or a list with the step number as a first element and the rest indicating an exact position in the source clause.
+  each step has a form `[formula id, [derivation rule, source 1, ..., source N], formula]` 
+  where the *formula* either stems from an input fact / rule or is derived
+  from the indicated sources. A source may be represented as a formula id or a list with 
+  the formula id as a first element and the rest indicating an exact position in the source formula.
 
-The formulas in the proof are always just lists of atoms (called *clauses*) treated
-as a disjunction (or). Negation is prefixed as a minus sign `-` to the predicate:
+In this document all the formulas in the proofs are *clauses*: lists of positive or negative
+atoms treated as a disjunction (or). Negation is prefixed as a minus sign `-` to the predicate:
 `["-sibling","mike","pete"]` means the same as `["not" ["sibling","mike","pete"]]`.
 Strings prefixed by `?:` like `?:X` are *free variables* implicitly assumed to be quantified by *forall*.
 `["in","frm_N" ]` means that the clause stems from the *N*th fact/rule given as input.
@@ -550,7 +551,7 @@ the following example:
       ["sibling","john","mike"],
       ["sibling","john","pete"],
       [["sibling","?:X","?:Y"], "=>", ["sibling","?:Y","?:X"]],
-      [["is_father","?:X"], "<=>", ["exists",["Y"],["father,"?:X","Y"]]]      
+      [["is_father","?:X"], "<=>", ["exists",["Y"],["father","?:X","Y"]]]      
     ]
 
 The elements of the formula list are translated as a conjunction
@@ -560,13 +561,13 @@ Each formula in the list containing free variables
 is translated by binding the free variables in this formula by
 a "forall" quantifier at the top level of this formula, except for
 the formulas with the *conjecture* role (to be described later).
-The previous example is thus equivalent to:
+The previous example is thus equivalent to the following *single formula*:
 
     [
       ["sibling","john","mike"], "&", 
       ["sibling","john","pete"], "&",
       ["forall",["X","Y"], [["sibling","X","Y"], "=>", ["sibling","Y","X"]]], "&",
-      ["forall",["X"], [["is_father","X"], "<=>", ["exists",["Y"],["father,"X","Y"]]]]      
+      ["forall",["X"], [["is_father","X"], "<=>", ["exists",["Y"],["father","X","Y"]]]]      
     ]
  
 Notice that 
@@ -1355,20 +1356,15 @@ The example above can be converted as
         <=> 
         (? [C1,C2,A,M] : 
           (~(C1 = C2) & 
-          ((! [X] : 
-            ($arc(C2,mother,M) & 
-            ($arc(C2,father,X) & 
-             $arc(C2,age,A)))) & 
-          ($arc(X,child,C2) & 
-          ((! [X] : 
-            ($arc(C1,mother,M) & 
-            ($arc(C1,father,X) &
-             $arc(C1,age,A)))) & 
-          $arc(X,child,C1))))))))).
+           (($arc(C2,mother,M) & ($arc(C2,father,X) & $arc(C2,age,A))) & 
+           ($arc(X,child,C2) & 
+           (($arc(C1,mother,M) & ($arc(C1,father,X) & $arc(C1,age,A))) & 
+           $arc(X,child,C1))))))))).
 
 Since the values of variables in this example depend on the values of other variables,
 we cannot express the same logic by using the blank nodes instead of bound variables:
-the clausified version of the formula contains *Skolem functions* with variables as arguments.
+the clausified version of the formula contains four *Skolem functions* with the `X`
+variable as argument, each corresponding to one existentially quantified variable.
 
 Next we will present a more complex example with a nested `"child"` value indicating that
 the person we describe (with no id given) has two children with ages
@@ -1710,7 +1706,7 @@ These functions can be applied to non-list arguments, where they are left as is 
 evaluated.
 
 Observe that since JSON-LD-LOGIC does not contain a theory of arithmetic, lists or strings,
-the example formula `["exists",["X"],["$is_list","X"]]` is not guaranteed to be provable:
+an example formula `["exists",["X"],["$is_list","X"]]` is not guaranteed to be provable:
 an implementation may prove it or not, depending on the particular theory and a proof search method
 implemented. 
 
@@ -1835,7 +1831,7 @@ evaluated. The last predicate can be similarly applied to any arguments. For exa
 is not evaluated, while `["$is_distinct", 1]` is evaluated to *false* and `["$is_distinct", "#:d"]` is evaluated to *true*.
 
 Observe that since JSON-LD-LOGIC does not contain a theory of arithmetic, lists or strings,
-the example formula `["exists",["X"],["$is_distinct","X"]]` is not guaranteed to be provable:
+an example formula `["exists",["X"],["$is_distinct","X"]]` is not guaranteed to be provable:
 an implementation may prove it or not, depending on the particular theory and a proof search method
 implemented. 
 
@@ -1911,3 +1907,10 @@ The proof:
     ]}
     ]}
 
+Finding the last proof is, in a sense, nontrivial. Since JSON-LD-LOGIC does not specify any axioms 
+for distinct symbols, by default there are also no inequality axioms between distinct symbols
+like `["#:person","!=","#:dog"]`. Finding a proof without these axioms requires that the
+search strategy happens to generate evaluable literals like `["#:person","=","#:dog"]` in 
+derived clauses. This may actually happen for some search strategies, but not for others.
+Implementations may devise their own methods for axiomatizing inequality of distinct symbols
+or using specialized strategies: this is neither required nor prohibited by JSON-LD-LOGIC.
