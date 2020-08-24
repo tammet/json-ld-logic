@@ -25,14 +25,14 @@ Contents
   * [Included files](#Included-files)
 * [Full JSON-LD-LOGIC](#Full-JSON-LD-LOGIC)
   * [JSON objects aka maps](#JSON-objects-aka-maps)
-    * [Ordinary and distinct symbols](#Ordinary-and-distinct-symbols)
-    * [Datatypes and typed symbols](#Datatypes-and-typed-symbols)
-    * [Missing id and blank nodes](#Missing-id-and-blank-nodes)
+  * [Ordinary and distinct symbols](#Ordinary-and-distinct-symbols)
+  * [Datatypes and typed symbols](#Datatypes-and-typed-symbols)
+  * [Missing id and blank nodes](#Missing-id-and-blank-nodes)
   * [Introducing logic to JSON-LD](#Introducing-logic-to-JSON-LD)
-    * [ans and question](#ans-and-question)
-    * [Convenience connectives and predicates](#Convenience-connectives-and-predicates)
-    * [Multiple values and the context and namespaces and the base type](#Multiple-values-and-the-context-and-namespaces-and-the-base-type)
-    * [Nested objects aka maps](#Nested-objects-aka-maps)
+  * [ans and question](#ans-and-question)
+  * [Convenience connectives and predicates](#Convenience-connectives-and-predicates)
+  * [Multiple values and the context and namespaces and the base type](#Multiple-values-and-the-context-and-namespaces-and-the-base-type)
+  * [Nested objects aka maps](#Nested-objects-aka-maps)
   * [Graphs and quads with the narc predicate](#Graphs-and-quads-with-the-narc-predicate)
   * [Numbers and arithmetic](#Numbers-and-arithmetic)
   * [Lists and list functions](#Lists-and-list-functions)
@@ -756,7 +756,7 @@ is implementation-specific, but the logical semantics should be exactly
 as indicated in the TPTP conversion.
 
 
-#### Ordinary and distinct symbols
+### Ordinary and distinct symbols
 
 Importantly, both the *subject*, *property* and *value* strings 
 like "john" and "pete" in the example above are treated as ordinary
