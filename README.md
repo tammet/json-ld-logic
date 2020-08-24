@@ -728,9 +728,10 @@ The main additional features of the full language above the core fragment are:
 
 ### JSON objects aka maps
 
-JSON objects are interpreted according to the RDF semantics of JSON-LD, 
-with modifications for the interpretation of JSON-LD lists and `null` as 
-described later in this section.
+JSON objects are interpreted according to the 
+(RDF)[https://en.wikipedia.org/wiki/Resource_Description_Framework] 
+semantics of JSON-LD, with modifications for the interpretation of 
+JSON-LD lists and `null` as described later in this section.
 
 The core principle is that each RDF triple `subject, property, value` is 
 converted to an atom `["$arc",subject,property,value]` indicating that
@@ -891,11 +892,6 @@ documents/files are merged in some way.
 
 The value of the `"@logic"` key in an object/map is treated as a logical formula,
 using either the core fragment described before or the full JSON-LD-LOGIC language.
-
-The value of the `"@logic"` key should not contain `"@logic"`, i.e. it should
-not be nested. It can contain other objects/maps though, interpreted in the same
-was as defined in the current specification: objects/maps can be nested in the
-the logical formula.
 
 Both the value of the `"@logic"` key and values of ordinary property keys may
 contain free variables. The free variables occurring in the value of the `"@logic"` key 
