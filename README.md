@@ -47,7 +47,7 @@ first order logic [FOL](https://en.wikipedia.org/wiki/First-order_logic "FOL")
 formulas in a machine-processable manner suitable for automated reasoners.
 
 The main goals of JSON-LD-LOGIC are:
-* Ease of understanding and writing.
+* Providing a simple format for the programmatic management of logical problems and proofs.
 * Compatibility with the [TPTP](http://tptp.org "TPTP") language used by 
   most high-end full FOL reasoners, as described in the  
   [TPTP technical manual](http://tptp.org/TPTP/TR/TPTPTR.shtml#ProblemPresentation).
