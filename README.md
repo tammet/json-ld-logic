@@ -30,7 +30,7 @@ Contents
   * [Missing id and blank nodes](#Missing-id-and-blank-nodes)
   * [Introducing logic to JSON-LD](#Introducing-logic-to-JSON-LD)  
   * [ans and question](#ans-and-question)
-  * [Uniqueness of Skolem functions](#Uniqueness of Skolem functions)
+  * [Uniqueness of Skolem functions](#Uniqueness-of-Skolem-functions)
   * [Convenience connectives and predicates](#Convenience-connectives-and-predicates)
   * [Multiple values and the context and namespaces and the base type](#Multiple-values-and-the-context-and-namespaces-and-the-base-type)
   * [Nested objects aka maps](#Nested-objects-aka-maps)
