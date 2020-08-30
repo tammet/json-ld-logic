@@ -28,8 +28,9 @@ Contents
   * [Ordinary and distinct symbols](#Ordinary-and-distinct-symbols)
   * [Datatypes and typed symbols](#Datatypes-and-typed-symbols)
   * [Missing id and blank nodes](#Missing-id-and-blank-nodes)
-  * [Introducing logic to JSON-LD](#Introducing-logic-to-JSON-LD)
+  * [Introducing logic to JSON-LD](#Introducing-logic-to-JSON-LD)  
   * [ans and question](#ans-and-question)
+  * [Uniqueness of Skolem functions](#Uniqueness of Skolem functions)
   * [Convenience connectives and predicates](#Convenience-connectives-and-predicates)
   * [Multiple values and the context and namespaces and the base type](#Multiple-values-and-the-context-and-namespaces-and-the-base-type)
   * [Nested objects aka maps](#Nested-objects-aka-maps)
@@ -575,16 +576,16 @@ Notice that
 
 * The existentially quantified `"Y"` variable in the last formula is dependent on
   the leading `"X"` variable of the same formula. The last formula can be converted
-  to a clause normal form with the help of *Skolemization* as
+  to a clause normal form with the help of *Skolemization* introducing a new blank node
+  `'_:sk1'` as a function symbol like
 
-  `cnf(frm_4,axiom,(~is_father(X0) | father(X0,$sk1(X0)))).`
+  `cnf(frm_4,axiom,(~is_father(X0) | father(X0,'_:sk1'(X0)))).`
 
   `cnf(frm_4,axiom,(is_father(X0) | ~father(X0,X1))).`
 
 * The free variables `"?:X"` in the last two formulas of the example before conversion 
   are distinct from each other.
   
-
    
 ### Metainformation and roles in the core fragment
 
@@ -685,15 +686,14 @@ with `@` prefix and not defined by JSON-LD, like `"@comment"`: such keys are ign
 full language, but may be given a specific meaning by applications.
 
 
-Included files
---------------
+### Included files
 
 A document may include other files/documents, treated by appending the included formula list and the formula
 list of the main document. Analogously to TPTP, JSON-LD-LOGIC uses a special object/map with the 
 form `{"@include":filename}` in the top formula list, interpreted as an *include command*:
 
     [
-      {"@include","foo.js"},
+      {"@include":"foo.js"},
       ...     
     ]
 
@@ -866,7 +866,7 @@ can be converted to TPTP as
 where `_:crtd_1` and `_:crtd_2` are new symbols not occurring anywhere else,
 corresponding to the *blank nodes* of JSON-LD and RDF. The blank nodes
 behave similarly to the outermost existentially quantified variables, converted to
-the *skolem constants* by the clausification algorithms.
+the *skolem constants* by the clausification algorithms. 
 
 The following JSON-LD example containing *blank nodes* 
     
@@ -885,7 +885,6 @@ syntactically identical blank nodes in different documents/files should be treat
 as different symbols. This could be achieved by renaming all the blank nodes
 in the documents to unique values in the scope of a document/file whenever several
 documents/files are merged in some way.
-
 
 
 ## Introducing logic to JSON-LD 
@@ -1041,6 +1040,26 @@ leads to a much faster proof search. The conversion to TPTP is thus:
     fof(frm_2,axiom,father(pete,mark)).
     fof(frm_3,axiom,(! [X,Y,Z] : ((father(X,Y) & father(Y,Z)) => grandfather(X,Z)))).
     fof(frm_4,negated_conjecture,(! [X] : (grandfather(john,X) => $ans(X)))).
+
+
+### Uniqueness of Skolem functions
+
+While not strictly a part of the language, conversion to the
+[skolem normal form](https://en.wikipedia.org/wiki/Skolem_normal_form) 
+replacing existentially quantified variables with new *skolem constants* and
+*skolem functions* commonly used during conversion to the 
+[conjuctive normal form](https://en.wikipedia.org/wiki/Conjunctive_normal_form)
+(*clausification procedure*) must guarantee uniqueness of generated symbols 
+when the output is a JSON-LD-LOGIC document intended to be used together
+with other JSON-LD or JSON-LD-LOGIC documents. Similarly, uniqueness should be
+guaranteed for new unique predicates and other unique symbols possibly introduced
+during clausification.
+
+A suitable way for guaranteering uniqueness is using new *blank nodes* like
+`_:sk_N`as such symbols. This guarantees that when JSON-LD-LOGIC expressions
+are skolemized or clausified to the JSON-LD-LOGIC form, different resulting
+documents can be merged using the JSON-LD/RDF *blank node semantics* without
+a conflict of generated symbols in different documents.
 
 
 ### Convenience connectives and predicates
@@ -1321,7 +1340,7 @@ The example can be converted to
 
 Notice that in the last example we could have used a *blank node* instead of an
 existentially quantified `X`: the clausified form of the example turns `X` into
-a *Skolem constant*.
+a *Skolem constant* which should be represented by a *blank node*.
 
 Next, let us define a type `fatheroftwins` illustrating the nesting of several
 layers of lists and objects/maps. In particular, one of the internal objects/maps
